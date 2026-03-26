@@ -127,16 +127,7 @@ For the first setup, run the following in order:
 3. `npm install`
 4. `cd ..`
 
-For normal day-to-day use, run the project in this sequence:
-
-1. `start_backend.bat`
-2. `start_frontend.bat`
-
-If you want both to open automatically, run:
-
-```bat
-start_project.bat
-```
+For normal day-to-day use, use the command list in `TERMINAL_COMMANDS.txt`.
 
 Manual terminal sequence:
 
