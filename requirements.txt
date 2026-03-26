@@ -1,0 +1,39 @@
+# === Core GPU & Deep Learning ===
+torch==2.3.1+cu121              # PyTorch with CUDA 12.1 (for RTX 3080)
+torchaudio==2.3.1+cu121
+torchvision==0.18.1+cu121
+--extra-index-url https://download.pytorch.org/whl/cu121
+
+# === Hugging Face Ecosystem ===
+transformers==4.44.0            # LLMs, embeddings, tokenizers
+sentence-transformers==3.0.1    # BGE, MiniLM, rerankers
+accelerate==0.33.0              # Efficient inference on GPU
+bitsandbytes==0.43.1            # Quantized (4/8-bit) LLMs
+
+# === Vector Databases ===
+chromadb==0.5.5                 # Local vector DB for dev
+faiss-cpu==1.8.0                # Fast ANN search (use GPU later if needed)
+# faiss-gpu available but tricky on Windows → stick with CPU for now
+
+# === RAG & Orchestration ===
+langchain==0.2.9                # RAG pipelines, agents
+llama-index==0.10.54            # Document ingestion & retrieval
+haystack-ai==2.1.0              # Alternative RAG framework
+
+# === Data Handling ===
+pandas==2.2.2                   # Excel/CSV dataset
+openpyxl==3.1.5                 # Excel reader
+numpy==1.26.4                   # Arrays & math
+
+# === Config & Utilities ===
+python-dotenv==1.0.1            # Secure API keys
+pyyaml==6.0.2                   # YAML configs
+loguru==0.7.2                   # Pretty logging
+
+# === UI & Demo ===
+streamlit==1.36.0               # Web app for manager demo
+gradio==4.39.0                  # Alternative UI for chat demo
+
+# === Testing & Dev ===
+pytest==8.2.2                   # Unit tests
+jupyter==1.0.0                  # Notebooks for experiments
