@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap");
+﻿@import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap");
 
 :root {
   color-scheme: dark;
@@ -205,12 +205,12 @@ button {
 
 .thread-panel {
   flex: 1;
-  width: min(100%, 54rem);
+  width: min(100%, 64rem);
   margin: 0 auto;
   padding: 1rem 1.5rem 7rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.7rem;
 }
 
 .message-row {
@@ -219,7 +219,16 @@ button {
   gap: 0.6rem;
 }
 
+.message-row.assistant {
+  align-items: flex-start;
+}
+
+.message-row.user {
+  align-items: flex-end;
+}
+
 .message-meta {
+  width: min(100%, 48rem);
   display: flex;
   align-items: center;
   gap: 0.6rem;
@@ -236,20 +245,33 @@ button {
 }
 
 .message-bubble {
+  width: min(100%, 48rem);
   border-radius: 1.2rem;
   padding: 1rem 1.1rem;
 }
 
 .message-bubble.user {
+  width: auto;
+  max-width: min(100%, 28rem);
   background: #303030;
 }
 
 .message-bubble.assistant {
-  background: #262626;
+  background: transparent;
+  border-color: transparent;
+  padding: 0;
 }
 
-.message-bubble.error {
+.message-bubble.assistant.error {
+  background: rgba(122, 68, 68, 0.14);
   border-color: #7a4444;
+  padding: 1rem 1.1rem;
+}
+
+.message-bubble.assistant.loading {
+  width: fit-content;
+  min-width: 3.5rem;
+  padding: 0.2rem 0;
 }
 
 .message-bubble p,
@@ -257,7 +279,12 @@ button {
   margin: 0;
 }
 
+.message-bubble.assistant p {
+  line-height: 1.7;
+}
+
 .result-card {
+  width: min(100%, 48rem);
   border-radius: 1.2rem;
   padding: 1rem;
 }
@@ -421,6 +448,18 @@ button {
   .empty-state {
     padding-left: 1rem;
     padding-right: 1rem;
+  }
+
+  .message-meta,
+  .message-bubble,
+  .result-card {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .message-bubble.user {
+    width: auto;
+    max-width: calc(100% - 2rem);
   }
 
   .composer-panel {

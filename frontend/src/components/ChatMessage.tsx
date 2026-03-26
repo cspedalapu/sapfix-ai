@@ -1,4 +1,4 @@
-import { modelLabels } from "@/data/mockData.ts";
+﻿import { modelLabels } from "@/data/mockData.ts";
 import { Message } from "@/types.ts";
 
 interface ChatMessageProps {
@@ -10,10 +10,12 @@ export function ChatMessage({ message }: ChatMessageProps) {
 
   return (
     <article className={`message-row ${message.role}`}>
-      <div className="message-meta">
-        <strong>{isAssistant ? "SAPFix AI" : "You"}</strong>
-        <span>{message.timestamp}</span>
-      </div>
+      {isAssistant ? (
+        <div className="message-meta assistant">
+          <strong>SAPFix AI</strong>
+          <span>{message.timestamp}</span>
+        </div>
+      ) : null}
 
       <div className={`message-bubble ${message.role}${message.state === "error" ? " error" : ""}`}>
         <p>{message.text}</p>
