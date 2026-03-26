@@ -1,4 +1,4 @@
-import { buildMockResponse } from "@/data/mockData.ts";
+﻿import { buildMockResponse, modelLabels } from "@/data/mockData.ts";
 import { AssistantResult, Message, ModelId, ResolutionSource } from "@/types.ts";
 
 export const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL ?? "").trim();
@@ -27,7 +27,7 @@ function normalizeSources(input: unknown): ResolutionSource[] {
   });
 }
 
-function normalizeApiResponse(payload: Record<string, unknown>, model: ModelId): AssistantResult {
+function normalizeApiResponse(payload: Record<string, unknown>, requestedModel: ModelId): AssistantResult {
   const sectionsRecord =
     typeof payload.sections === "object" && payload.sections !== null
       ? payload.sections as Record<string, unknown>
@@ -44,6 +44,14 @@ function normalizeApiResponse(payload: Record<string, unknown>, model: ModelId):
     : Array.isArray(payload.prevention)
       ? (payload.prevention as unknown[]).map((item) => String(item))
       : [];
+
+  const responseModel = String(payload.model ?? requestedModel) as ModelId;
+  const generationLabel = String(
+    payload.generation_label ??
+    payload.generationLabel ??
+    modelLabels[responseModel] ??
+    modelLabels[requestedModel]
+  );
 
   return {
     answer: String(payload.answer ?? payload.response ?? "The backend responded without a final answer."),
@@ -65,7 +73,11 @@ function normalizeApiResponse(payload: Record<string, unknown>, model: ModelId):
     sources: normalizeSources(payload.sources ?? payload.retrieved_results),
     latencyMs: Number(payload.latency_ms ?? payload.latencyMs ?? 0),
     mode: "api",
-    model
+    model: responseModel,
+    requestedModel: String(payload.requested_model ?? payload.requestedModel ?? requestedModel),
+    generationModel: String(payload.generation_model ?? payload.generationModel ?? responseModel),
+    generationLabel,
+    generationNote: String(payload.generation_note ?? payload.generationNote ?? "")
   };
 }
 

@@ -1,4 +1,4 @@
-import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
+﻿import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
 import { ChatMessage } from "@/components/ChatMessage.tsx";
 import { Sidebar } from "@/components/Sidebar.tsx";
 import { modelLabels, seededConversations } from "@/data/mockData.ts";
@@ -33,7 +33,7 @@ function buildFreshConversation(): Conversation {
     title: "New chat",
     preview: "Start a conversation",
     updatedAt: "Ready",
-    model: "llama3.1:8b",
+    model: "gpt-4o-mini",
     messages: []
   };
 }

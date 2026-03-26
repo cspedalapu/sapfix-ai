@@ -1,4 +1,4 @@
-export type ModelId = "llama3.1:8b" | "gpt-4o-mini";
+﻿export type ModelId = "llama3.1:8b" | "gpt-4o-mini";
 
 export interface ResolutionSource {
   title: string;
@@ -23,6 +23,10 @@ export interface AssistantResult {
   latencyMs: number;
   mode: "mock" | "api";
   model: ModelId;
+  requestedModel?: string;
+  generationModel?: string;
+  generationLabel?: string;
+  generationNote?: string;
 }
 
 export interface Message {

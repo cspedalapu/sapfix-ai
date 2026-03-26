@@ -7,6 +7,13 @@ interface ChatMessageProps {
 
 export function ChatMessage({ message }: ChatMessageProps) {
   const isAssistant = message.role === "assistant";
+  const requestedModelLabel = message.result ? modelLabels[message.result.model] : "";
+  const generationLabel = message.result?.generationLabel ?? requestedModelLabel;
+  const usedModelLine = message.result
+    ? message.result.requestedModel && generationLabel !== requestedModelLabel
+      ? `Model used: ${generationLabel} | Requested: ${requestedModelLabel}`
+      : `Model used: ${generationLabel}`
+    : "";
 
   return (
     <article className={`message-row ${message.role}`}>
@@ -28,10 +35,13 @@ export function ChatMessage({ message }: ChatMessageProps) {
 
             <div className="result-pills">
               <span className="result-pill">{message.result.mode.toUpperCase()}</span>
-              <span className="result-pill">{modelLabels[message.result.model]}</span>
+              <span className="result-pill">{generationLabel}</span>
               <span className="result-pill">{message.result.latencyMs} ms</span>
             </div>
           </div>
+
+          {usedModelLine ? <p className="result-runtime">{usedModelLine}</p> : null}
+          {message.result.generationNote ? <p className="result-runtime warning">{message.result.generationNote}</p> : null}
 
           <div className="result-grid">
             <div className="result-block">

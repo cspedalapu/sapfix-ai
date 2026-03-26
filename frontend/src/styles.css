@@ -301,6 +301,16 @@ button {
   font-size: 1rem;
 }
 
+.result-runtime {
+  margin: 0 0 0.9rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.result-runtime.warning {
+  color: #f2c078;
+}
+
 .result-pills {
   display: flex;
   gap: 0.5rem;

@@ -1,7 +1,7 @@
-import { AssistantResult, Conversation, ModelId, ResolutionSections, ResolutionSource } from "@/types.ts";
+﻿import { AssistantResult, Conversation, ModelId, ResolutionSections, ResolutionSource } from "@/types.ts";
 
 export const modelLabels: Record<ModelId, string> = {
-  "llama3.1:8b": "Local Llama 3.1:8b",
+  "llama3.1:8b": "Ollama Llama 3.1 8B",
   "gpt-4o-mini": "OpenAI GPT-4o-mini"
 };
 
@@ -221,7 +221,10 @@ export function buildMockResponse(query: string, model: ModelId): AssistantResul
     sources: template.sources,
     latencyMs: template.latencyMs,
     mode: "mock",
-    model
+    model,
+    requestedModel: model,
+    generationModel: model,
+    generationLabel: modelLabels[model]
   };
 }
 
@@ -231,7 +234,7 @@ export const seededConversations: Conversation[] = [
     title: "New diagnosis",
     preview: "Start a new SAP investigation",
     updatedAt: "Ready",
-    model: "llama3.1:8b",
+    model: "gpt-4o-mini",
     messages: []
   }
 ];

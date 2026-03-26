@@ -1,4 +1,4 @@
-# === Core GPU & Deep Learning ===
+﻿# === Core GPU & Deep Learning ===
 torch==2.3.1+cu121              # PyTorch with CUDA 12.1 (for RTX 3080)
 torchaudio==2.3.1+cu121
 torchvision==0.18.1+cu121
@@ -13,7 +13,6 @@ bitsandbytes==0.43.1            # Quantized (4/8-bit) LLMs
 # === Vector Databases ===
 chromadb==0.5.5                 # Local vector DB for dev
 faiss-cpu==1.8.0                # Fast ANN search (use GPU later if needed)
-# faiss-gpu available but tricky on Windows → stick with CPU for now
 
 # === RAG & Orchestration ===
 langchain==0.2.9                # RAG pipelines, agents
@@ -29,9 +28,17 @@ numpy==1.26.4                   # Arrays & math
 python-dotenv==1.0.1            # Secure API keys
 pyyaml==6.0.2                   # YAML configs
 loguru==0.7.2                   # Pretty logging
+requests==2.32.3                # HTTP calls for Ollama and API checks
+
+# === LLM Providers ===
+openai==1.68.2                  # OpenAI Chat Completions client
+
+# === API ===
+fastapi==0.115.6                # Backend chat API
+uvicorn==0.34.0                 # Local ASGI server
 
 # === UI & Demo ===
-streamlit==1.36.0               # Web app for manager demo
+streamlit==1.36.0               # Legacy demo UI
 gradio==4.39.0                  # Alternative UI for chat demo
 
 # === Testing & Dev ===
