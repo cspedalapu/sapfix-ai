@@ -1,5 +1,5 @@
-﻿import { Message } from "../types";
-import { modelLabels } from "../data/mockData";
+import { Message } from "@/types.ts";
+import { modelLabels } from "@/data/mockData.ts";
 
 interface ChatMessageProps {
   message: Message;

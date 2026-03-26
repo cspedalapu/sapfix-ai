@@ -1,5 +1,5 @@
-import { Conversation } from "../types";
-import { modelLabels } from "../data/mockData";
+import { Conversation } from "@/types.ts";
+import { modelLabels } from "@/data/mockData.ts";
 
 interface SidebarProps {
   conversations: Conversation[];

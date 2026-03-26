@@ -1,4 +1,4 @@
-import { AssistantResult, Conversation, ModelId, ResolutionSections, ResolutionSource } from "../types";
+import { AssistantResult, Conversation, ModelId, ResolutionSections, ResolutionSource } from "@/types.ts";
 
 export const modelLabels: Record<ModelId, string> = {
   "llama3.1:8b": "Local Llama 3.1:8b",
@@ -56,7 +56,7 @@ const fallbackTemplate: MockResolutionTemplate = {
 const templates: MockResolutionTemplate[] = [
   {
     keywords: ["gap", "gaps", "spaces", "numbers", "number range"],
-    diagnosticLabel: "/SCWM/LT 120 · Numeric entry or number-range issue",
+    diagnosticLabel: "/SCWM/LT 120 Â· Numeric entry or number-range issue",
     answerLead:
       "I found a close SAP EWM pattern. Start with the simplest cause first: remove any spaces from the numeric field, then confirm the related number range is still valid in SAP.",
     sections: {
@@ -241,7 +241,7 @@ export const seededConversations: Conversation[] = [
     id: "conv-numeric-gap",
     title: "Numeric entry gap",
     preview: numericResult.diagnosticLabel,
-    updatedAt: "Today · 09:24",
+    updatedAt: "Today Â· 09:24",
     model: "gpt-4o-mini",
     messages: [
       welcomeMessage,
@@ -264,7 +264,7 @@ export const seededConversations: Conversation[] = [
     id: "conv-logical-system",
     title: "Logical system RFC",
     preview: logicalSystemResult.diagnosticLabel,
-    updatedAt: "Yesterday · 17:08",
+    updatedAt: "Yesterday Â· 17:08",
     model: "llama3.1:8b",
     messages: [
       welcomeMessage,

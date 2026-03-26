@@ -1,5 +1,5 @@
-import { buildMockResponse } from "../data/mockData";
-import { AssistantResult, Message, ModelId, ResolutionSource } from "../types";
+import { buildMockResponse } from "@/data/mockData.ts";
+import { AssistantResult, Message, ModelId, ResolutionSource } from "@/types.ts";
 
 export const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL ?? "").trim();
 export const hasApiBaseUrl = apiBaseUrl.length > 0;

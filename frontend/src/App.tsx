@@ -1,9 +1,9 @@
-﻿import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
-import { ChatMessage } from "./components/ChatMessage";
-import { Sidebar } from "./components/Sidebar";
-import { modelLabels, seededConversations, suggestedPrompts } from "./data/mockData";
-import { hasApiBaseUrl, requestAssistantReply } from "./lib/chatClient";
-import { Conversation, Message, ModelId } from "./types";
+import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
+import { ChatMessage } from "@/components/ChatMessage.tsx";
+import { Sidebar } from "@/components/Sidebar.tsx";
+import { modelLabels, seededConversations, suggestedPrompts } from "@/data/mockData.ts";
+import { hasApiBaseUrl, requestAssistantReply } from "@/lib/chatClient.ts";
+import { Conversation, Message, ModelId } from "@/types.ts";
 
 function formatTime(date: Date): string {
   return date.toLocaleTimeString([], {
