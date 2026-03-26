@@ -16,14 +16,19 @@ from openai import OpenAI
 
 load_dotenv()
 
+GPT_UI_MODEL = "gpt-4o-mini"
 MODEL_LABELS = {
     "llama3.1:8b": "Ollama Llama 3.1 8B",
-    "gpt-4o-mini": "OpenAI GPT-4o-mini",
+    GPT_UI_MODEL: "GPT-4o-mini",
 }
 
-DEFAULT_MODEL = "gpt-4o-mini"
+DEFAULT_MODEL = GPT_UI_MODEL
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434/api/generate")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "").strip()
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "").strip()
+GITHUB_MODELS_ENDPOINT = os.getenv("GITHUB_MODELS_ENDPOINT", "https://models.github.ai/inference").rstrip("/")
+GITHUB_MODEL = os.getenv("GITHUB_MODEL", "openai/gpt-4o-mini").strip()
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", GPT_UI_MODEL).strip()
 
 
 @dataclass
@@ -267,15 +272,41 @@ Retrieved knowledge base context:
 """.strip()
 
 
-def generate_with_openai(model: str, query: str, history: list[dict[str, str]], records: list[RetrievedRecord]) -> dict[str, Any]:
-    if not OPENAI_API_KEY:
-        raise RuntimeError("OPENAI_API_KEY is not configured.")
+def get_github_token() -> str:
+    if GITHUB_TOKEN:
+        return GITHUB_TOKEN
+    if OPENAI_API_KEY.lower().startswith("github_"):
+        return OPENAI_API_KEY
+    return ""
 
-    client = OpenAI(api_key=OPENAI_API_KEY)
+
+def resolve_gpt_backend() -> tuple[OpenAI, str, str, str]:
+    github_token = get_github_token()
+    if github_token:
+        return (
+            OpenAI(base_url=GITHUB_MODELS_ENDPOINT, api_key=github_token),
+            GITHUB_MODEL,
+            f"GitHub Models - {GITHUB_MODEL}",
+            "github-models",
+        )
+
+    if OPENAI_API_KEY:
+        return (
+            OpenAI(api_key=OPENAI_API_KEY),
+            OPENAI_MODEL,
+            f"OpenAI - {OPENAI_MODEL}",
+            "openai",
+        )
+
+    raise RuntimeError("No GPT token is configured. Set GITHUB_TOKEN to use GitHub Models.")
+
+
+def generate_with_gpt(query: str, history: list[dict[str, str]], records: list[RetrievedRecord]) -> tuple[dict[str, Any], str, str, str]:
+    client, provider_model, provider_label, provider_name = resolve_gpt_backend()
     prompt = build_generation_prompt(query, history, records)
 
     response = client.chat.completions.create(
-        model=model,
+        model=provider_model,
         temperature=0.2,
         response_format={"type": "json_object"},
         messages=[
@@ -286,10 +317,10 @@ def generate_with_openai(model: str, query: str, history: list[dict[str, str]], 
     )
 
     content = response.choices[0].message.content or "{}"
-    return json.loads(content)
+    return json.loads(content), provider_model, provider_label, provider_name
 
 
-def generate_with_ollama(model: str, query: str, history: list[dict[str, str]], records: list[RetrievedRecord]) -> dict[str, Any]:
+def generate_with_ollama(model: str, query: str, history: list[dict[str, str]], records: list[RetrievedRecord]) -> tuple[dict[str, Any], str, str]:
     prompt = build_generation_prompt(query, history, records)
     payload = {
         "model": model,
@@ -302,7 +333,7 @@ def generate_with_ollama(model: str, query: str, history: list[dict[str, str]], 
     response.raise_for_status()
     data = response.json()
     content = data.get("response", "{}")
-    return json.loads(content)
+    return json.loads(content), model, MODEL_LABELS.get(model, model)
 
 
 def coerce_sections(payload: dict[str, Any], fallback_sections: dict[str, Any]) -> dict[str, Any]:
@@ -320,10 +351,16 @@ def coerce_sections(payload: dict[str, Any], fallback_sections: dict[str, Any]) 
 
 def describe_generation_fallback(model: str, error: Exception) -> str:
     text = str(error).lower()
-    if model == "gpt-4o-mini":
-        if "invalid_api_key" in text or "incorrect api key" in text or "authenticationerror" in text:
-            return "OpenAI authentication failed. Update OPENAI_API_KEY to enable GPT-4o-mini responses."
-        return "OpenAI could not be reached, so the reply was generated from the local knowledge base."
+    if model == GPT_UI_MODEL:
+        if not get_github_token() and not OPENAI_API_KEY:
+            return "Set GITHUB_TOKEN in .env to enable GitHub Models responses."
+        if get_github_token():
+            if "invalid_api_key" in text or "incorrect api key" in text or "authenticationerror" in text or "401" in text:
+                return "GitHub Models authentication failed. Check GITHUB_TOKEN in .env."
+            return "GitHub Models could not be reached, so the reply was generated from the local knowledge base."
+        if "invalid_api_key" in text or "incorrect api key" in text or "authenticationerror" in text or "401" in text:
+            return "OpenAI authentication failed. Check OPENAI_API_KEY in .env."
+        return "The GPT provider could not be reached, so the reply was generated from the local knowledge base."
 
     if "connection refused" in text or "failed to establish a new connection" in text or "max retries exceeded" in text:
         return "Ollama is not reachable at the configured local URL, so the reply was generated from the local knowledge base."
@@ -367,12 +404,18 @@ def generate_chat_response(query: str, model: str = DEFAULT_MODEL, top_k: int = 
     generation_note = ""
 
     try:
-        payload = generate_with_openai(model, query, history, records) if model == "gpt-4o-mini" else generate_with_ollama(model, query, history, records)
+        if model == GPT_UI_MODEL:
+            payload, provider_model, provider_label, _ = generate_with_gpt(query, history, records)
+            generation_model = provider_model
+            generation_label = provider_label
+        else:
+            payload, provider_model, provider_label = generate_with_ollama(model, query, history, records)
+            generation_model = provider_model
+            generation_label = provider_label
+
         sections = coerce_sections(payload, sections)
         answer = str(payload.get("answer") or answer).strip()
         diagnostic_label = str(payload.get("diagnostic_label") or diagnostic_label).strip()
-        generation_model = model
-        generation_label = MODEL_LABELS.get(model, model)
     except Exception as error:
         generation_note = describe_generation_fallback(model, error)
 

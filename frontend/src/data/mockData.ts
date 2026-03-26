@@ -2,7 +2,7 @@
 
 export const modelLabels: Record<ModelId, string> = {
   "llama3.1:8b": "Ollama Llama 3.1 8B",
-  "gpt-4o-mini": "OpenAI GPT-4o-mini"
+  "gpt-4o-mini": "GPT-4o-mini"
 };
 
 export const suggestedPrompts = [
@@ -211,7 +211,7 @@ export function buildMockResponse(query: string, model: ModelId): AssistantResul
   const template = pickTemplate(query);
   const modeSpecificTail =
     model === "gpt-4o-mini"
-      ? " Once the backend endpoint is connected, the GPT path can turn the retrieved snippets into a polished final answer."
+      ? " Once the backend endpoint is connected, the GitHub Models GPT path can turn the retrieved snippets into a polished final answer."
       : " Once the backend endpoint is connected, the local Llama path can synthesize the retrieved snippets without changing the UI flow.";
 
   return {

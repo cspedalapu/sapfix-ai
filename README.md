@@ -1,45 +1,60 @@
 ﻿# SAPFix AI
 
-SAPFix AI is a Python RAG prototype for SAP error-resolution support with a new Node.js frontend for a cleaner chat workflow.
+SAPFix AI is a Python SAP troubleshooting backend with a React frontend for chat-style incident diagnosis.
 
-## What Is In This Repo
+## Repo Structure
 
-- `src/`: Python retrieval, embedding, vector-store, and LLM wrappers.
-- `app.py`: Current Streamlit prototype for running the pipeline end-to-end.
-- `data/`: Local raw and processed SAP datasets. Real files are ignored by git.
-- `output/`: Generated Chroma and runtime artifacts. Ignored by git.
-- `evaluation/`: Small evaluation scripts for retrieval and answer quality experiments.
-- `frontend/`: New React + Vite frontend inspired by the chat-first layout cues from `https://chatgpt.com/`.
+- `api_server.py`: FastAPI entrypoint exposing `/health`, `/models`, and `/chat`.
+- `src/chat_service.py`: Retrieval plus generation orchestration.
+- `src/`: Legacy retrieval, embedding, vector store, and LLM helpers.
+- `frontend/`: React + Vite frontend.
+- `data/`: Local SAP dataset files. Real data stays out of Git.
+- `output/`: Generated local runtime artifacts. Ignored by Git.
+- `app.py`: Older Streamlit prototype.
 
-## Frontend
+## Model Providers
 
-The new frontend gives the project a more modern support-console experience:
+The GPT path now prefers GitHub Models using the OpenAI-compatible API.
 
-- Left sidebar for recent investigations
-- Focused chat thread in the center
-- Structured assistant cards with business context, root cause, steps, and retrieved matches
-- API mode when a backend endpoint is available
-- Mock mode with seeded SAP cases until the Python backend exposes `/chat`
+Provider order:
 
-### Run The Frontend
+1. `GITHUB_TOKEN` with `https://models.github.ai/inference`
+2. `OPENAI_API_KEY` as a fallback direct OpenAI path
+3. Local knowledge-base synthesis if neither GPT provider is available
 
-```bash
-cd frontend
-npm install
-npm run dev
+The local Llama option still uses Ollama through `OLLAMA_BASE_URL`.
+
+## Environment
+
+Create `.env` from `.env.example` and set the values you want to use:
+
+```env
+GITHUB_TOKEN=
+GITHUB_MODELS_ENDPOINT=https://models.github.ai/inference
+GITHUB_MODEL=openai/gpt-4o-mini
+OPENAI_API_KEY=
+OLLAMA_BASE_URL=http://localhost:11434/api/generate
 ```
 
-Create `frontend/.env` from `frontend/.env.example` if you want the UI to call a backend:
+Notes:
+
+- For GitHub Models, `GITHUB_TOKEN` is the important value.
+- `OPENAI_API_KEY` is optional and only used as a fallback if `GITHUB_TOKEN` is missing.
+- If you previously pasted a GitHub token into `OPENAI_API_KEY`, the backend will still recognize it, but `GITHUB_TOKEN` is the cleaner setup.
+
+## Run The Backend
 
 ```bash
-VITE_API_BASE_URL=http://127.0.0.1:8000
+.venv\Scripts\python.exe -m uvicorn api_server:app --host 127.0.0.1 --port 8001
 ```
 
-If `VITE_API_BASE_URL` is not set, the frontend stays usable in mock mode.
+API endpoints:
 
-## Suggested Backend API Contract
+- `GET /health`
+- `GET /models`
+- `POST /chat`
 
-The frontend is ready for a `POST /chat` endpoint with a payload like:
+Example request:
 
 ```json
 {
@@ -52,33 +67,25 @@ The frontend is ready for a `POST /chat` endpoint with a payload like:
 }
 ```
 
-A matching response can look like:
+The response includes the requested model, the actual generation model, and a fallback note when GPT was not used.
 
-```json
-{
-  "answer": "Re-enter the value without spaces and validate the number range.",
-  "diagnostic_label": "/SCWM/LT 120 - Numeric entry or number-range issue",
-  "sections": {
-    "businessContext": "Warehouse execution document entry.",
-    "rootCause": "Invalid formatting or exhausted number range.",
-    "steps": ["Re-enter the value", "Check SNRO interval"],
-    "prevention": ["Validate copied numbers", "Monitor number ranges"]
-  },
-  "sources": [
-    {
-      "title": "Enter the numbers without any gaps",
-      "system": "SAP EWM",
-      "origin": "OpenAI resolution",
-      "summary": "Check numeric formatting first.",
-      "confidence": "High match"
-    }
-  ],
-  "latency_ms": 842
-}
+## Run The Frontend
+
+```bash
+cd frontend
+npm install
+npm run build
+npm run dev
 ```
 
-## Current Notes
+Set the frontend API target in `frontend/.env.local` or `frontend/.env`:
 
-- Python dependencies remain in `requirements.txt`.
-- `.env`, `.venv`, processed data, and generated output are ignored by git.
-- The frontend is ready now, but the Python side still needs a dedicated HTTP API for full integration.
+```env
+VITE_API_BASE_URL=http://127.0.0.1:8001
+```
+
+## Current Behavior
+
+- The frontend shows the requested model and the actual model/provider used.
+- If GitHub Models or OpenAI is unavailable, the backend still returns a grounded answer using the local SAP knowledge base.
+- The original embedding-based retriever is still in the repo, but the current API path uses an offline-safe keyword retrieval flow so the app remains usable without external model downloads.
