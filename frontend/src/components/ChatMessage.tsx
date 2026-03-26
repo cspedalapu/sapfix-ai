@@ -55,7 +55,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
             </div>
           </div>
 
-          <div className="result-block">
+          <div className="result-block wide">
             <p className="result-block-label">Steps</p>
             <ol>
               {message.result.sections.steps.map((step) => (

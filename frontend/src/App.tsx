@@ -1,9 +1,26 @@
-﻿import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
+﻿import { FormEvent, KeyboardEvent, SVGProps, useEffect, useRef, useState } from "react";
 import { ChatMessage } from "@/components/ChatMessage.tsx";
 import { Sidebar } from "@/components/Sidebar.tsx";
 import { modelLabels, seededConversations } from "@/data/mockData.ts";
 import { requestAssistantReply } from "@/lib/chatClient.ts";
 import { Conversation, Message, ModelId } from "@/types.ts";
+
+function SidebarIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+      <rect x="4.5" y="5" width="15" height="14" rx="3" />
+      <path d="M11 5v14" />
+    </svg>
+  );
+}
+
+function PlusIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}
 
 function formatTime(date: Date): string {
   return date.toLocaleTimeString([], {
@@ -171,6 +188,10 @@ export default function App() {
   function renderComposer(empty: boolean) {
     return (
       <form className={`composer-panel${empty ? " empty" : ""}`} onSubmit={handleSubmit}>
+        <button className="composer-icon-button" type="button" aria-label="Add context">
+          <PlusIcon />
+        </button>
+
         <textarea
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
@@ -178,8 +199,9 @@ export default function App() {
           placeholder="Ask about an SAP issue"
           rows={1}
         />
-        <button className="send-button" type="submit" disabled={isLoading || !draft.trim()}>
-          {isLoading ? "Working..." : "Send"}
+
+        <button className="composer-submit" type="submit" disabled={isLoading || !draft.trim()}>
+          {isLoading ? "Working" : "Send"}
         </button>
       </form>
     );
@@ -202,34 +224,40 @@ export default function App() {
           <div className="workspace-title-row">
             {!isSidebarOpen ? (
               <button
-                className="sidebar-toggle"
+                className="icon-button topbar-toggle"
                 type="button"
                 onClick={() => setIsSidebarOpen(true)}
                 aria-label="Open sidebar"
               >
-                Open
+                <SidebarIcon />
               </button>
             ) : null}
-            <h1 className="workspace-title">SAPFix AI</h1>
+
+            <button className="chat-title-button" type="button">
+              <span>SAPFix AI</span>
+              <span className="title-caret">⌄</span>
+            </button>
           </div>
 
-          <label className="model-control">
-            <select
-              value={selectedModel}
-              onChange={(event) => setSelectedModel(event.target.value as ModelId)}
-            >
-              {Object.entries(modelLabels).map(([modelId, label]) => (
-                <option key={modelId} value={modelId}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </label>
+          <div className="workspace-actions">
+            <label className="model-control">
+              <select
+                value={selectedModel}
+                onChange={(event) => setSelectedModel(event.target.value as ModelId)}
+              >
+                {Object.entries(modelLabels).map(([modelId, label]) => (
+                  <option key={modelId} value={modelId}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
         </header>
 
         {isEmpty ? (
           <section className="empty-state">
-            <h2 className="empty-title">Draft your issue...</h2>
+            <h2 className="empty-title">Draft your SAP issue</h2>
             {renderComposer(true)}
           </section>
         ) : (
@@ -241,7 +269,7 @@ export default function App() {
 
               {isLoading ? (
                 <article className="message-row assistant">
-                  <div className="message-meta">
+                  <div className="message-meta assistant">
                     <strong>SAPFix AI</strong>
                     <span>Working</span>
                   </div>
