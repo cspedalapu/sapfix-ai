@@ -44,6 +44,7 @@ export default function App() {
   const [selectedModel, setSelectedModel] = useState<ModelId>(seededConversations[0].model);
   const [draft, setDraft] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   const activeConversation =
@@ -185,17 +186,32 @@ export default function App() {
   }
 
   return (
-    <div className="app-shell">
-      <Sidebar
-        conversations={conversations}
-        activeConversationId={activeConversationId}
-        onNewConversation={handleNewConversation}
-        onSelectConversation={setActiveConversationId}
-      />
+    <div className={`app-shell${isSidebarOpen ? "" : " sidebar-collapsed"}`}>
+      {isSidebarOpen ? (
+        <Sidebar
+          conversations={conversations}
+          activeConversationId={activeConversationId}
+          onNewConversation={handleNewConversation}
+          onSelectConversation={setActiveConversationId}
+          onCloseSidebar={() => setIsSidebarOpen(false)}
+        />
+      ) : null}
 
       <main className="workspace">
         <header className="workspace-topbar">
-          <h1 className="workspace-title">SAPFix AI</h1>
+          <div className="workspace-title-row">
+            {!isSidebarOpen ? (
+              <button
+                className="sidebar-toggle"
+                type="button"
+                onClick={() => setIsSidebarOpen(true)}
+                aria-label="Open sidebar"
+              >
+                Open
+              </button>
+            ) : null}
+            <h1 className="workspace-title">SAPFix AI</h1>
+          </div>
 
           <label className="model-control">
             <select
@@ -246,6 +262,3 @@ export default function App() {
     </div>
   );
 }
-
-
-

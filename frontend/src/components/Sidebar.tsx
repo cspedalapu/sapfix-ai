@@ -1,24 +1,37 @@
-import { Conversation } from "@/types.ts";
+﻿import { Conversation } from "@/types.ts";
 
 interface SidebarProps {
   conversations: Conversation[];
   activeConversationId: string;
   onNewConversation: () => void;
   onSelectConversation: (conversationId: string) => void;
+  onCloseSidebar: () => void;
 }
 
 export function Sidebar({
   conversations,
   activeConversationId,
   onNewConversation,
-  onSelectConversation
+  onSelectConversation,
+  onCloseSidebar
 }: SidebarProps) {
   return (
     <aside className="sidebar">
       <div className="sidebar-top">
         <div className="brand-line">
-          <div className="brand-mark">S</div>
-          <span className="brand-name">SAPFix AI</span>
+          <div className="brand-group">
+            <div className="brand-mark">S</div>
+            <span className="brand-name">SAPFix AI</span>
+          </div>
+
+          <button
+            className="sidebar-toggle sidebar-toggle-inline"
+            type="button"
+            onClick={onCloseSidebar}
+            aria-label="Close sidebar"
+          >
+            Close
+          </button>
         </div>
 
         <button className="ghost-button" type="button" onClick={onNewConversation}>
