@@ -1,7 +1,8 @@
 SAPFix AI terminal command sequence
 
 Project root:
-d:\#Code\VS Code\sapfix-ai
+
+<your_file_path>\sapfix-ai
 
 First-time setup
 
@@ -15,11 +16,11 @@ npm install
 Normal run sequence
 
 Terminal 1: Backend
-cd /d d:\#Code\VS Code\sapfix-ai
+<your_file_path>\sapfix-ai
 .venv\Scripts\python.exe -m uvicorn api_server:app --host 127.0.0.1 --port 8003
 
 Terminal 2: Frontend
-cd /d d:\#Code\VS Code\sapfix-ai\frontend
+<your_file_path>\sapfix-ai\frontend
 npm run dev -- --host 127.0.0.1 --port 4175
 
 Optional local Ollama setup
