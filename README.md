@@ -77,6 +77,54 @@ The current API flow uses an offline-safe keyword retrieval path from the proces
 - `app.py`
   Older Streamlit prototype
 
+## Repository Structure
+
+```text
+sapfix-ai/
+├─ api_server.py
+├─ app.py
+├─ main.py
+├─ requirements.txt
+├─ .env.example
+├─ frontend/
+│  ├─ package.json
+│  ├─ src/
+│  │  ├─ App.tsx
+│  │  ├─ main.tsx
+│  │  ├─ styles.css
+│  │  ├─ components/
+│  │  ├─ data/
+│  │  ├─ lib/
+│  │  └─ types.ts
+│  └─ vite.config.ts
+├─ src/
+│  ├─ chat_service.py
+│  ├─ data_loader.py
+│  ├─ embedder.py
+│  ├─ llm_api.py
+│  ├─ llm_local.py
+│  ├─ preprocessor.py
+│  ├─ retriever.py
+│  └─ vectorstore.py
+├─ data/
+│  ├─ raw/
+│  └─ processed/
+├─ output/
+├─ evaluation/
+├─ docs/
+│  └─ screenshots/
+├─ tests/
+├─ notebooks/
+└─ config/
+```
+
+Structure notes:
+
+- `frontend/` contains the reusable React UI
+- `src/` contains the backend chat logic plus older retrieval and embedding modules
+- `data/` stores local SAP input and processed files, but confidential data is ignored by Git
+- `docs/screenshots/` stores README images that are safe to push to GitHub
+
 ## Environment
 
 Create `.env` from `.env.example` and set the values you want to use:
