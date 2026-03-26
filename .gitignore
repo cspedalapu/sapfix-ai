@@ -39,6 +39,14 @@ data/processed/**
 output/**
 !output/.gitkeep
 
+# Confidential SAP datasets and spreadsheet exports
+data/**/*.xlsx
+data/**/*.xls
+data/**/*.csv
+data/**/*.json
+**/error_resolutions*.xlsx
+**/error_resolutions*.xls
+
 # Node.js / frontend
 node_modules/
 .next/
