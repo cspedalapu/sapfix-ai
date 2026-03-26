@@ -56,27 +56,119 @@ function PulseIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+function HelpIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+      <circle cx="12" cy="12" r="8" />
+      <path d="M9.9 9.4a2.4 2.4 0 1 1 4 2c-.9.7-1.4 1.2-1.4 2.4" />
+      <path d="M12 17h.01" />
+    </svg>
+  );
+}
+
+function SettingsIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+      <circle cx="12" cy="12" r="2.8" />
+      <path d="M19.4 15a1 1 0 0 0 .2 1.1l.1.1a1.9 1.9 0 0 1-2.7 2.7l-.1-.1a1 1 0 0 0-1.1-.2 1 1 0 0 0-.6.9V20a1.9 1.9 0 0 1-3.8 0v-.2a1 1 0 0 0-.7-.9 1 1 0 0 0-1 .2l-.2.1a1.9 1.9 0 1 1-2.7-2.7l.1-.1a1 1 0 0 0 .2-1.1 1 1 0 0 0-.9-.6H4a1.9 1.9 0 0 1 0-3.8h.2a1 1 0 0 0 .9-.7 1 1 0 0 0-.2-1L4.8 8a1.9 1.9 0 1 1 2.7-2.7l.1.1a1 1 0 0 0 1.1.2h.1a1 1 0 0 0 .6-.9V4a1.9 1.9 0 0 1 3.8 0v.2a1 1 0 0 0 .7.9 1 1 0 0 0 1-.2l.2-.1A1.9 1.9 0 1 1 19.8 8l-.1.1a1 1 0 0 0-.2 1.1v.1a1 1 0 0 0 .9.6h.2a1.9 1.9 0 0 1 0 3.8h-.2a1 1 0 0 0-.9.7Z" />
+    </svg>
+  );
+}
+
 interface SidebarProps {
   conversations: Conversation[];
   activeConversationId: string;
+  isCollapsed: boolean;
   onNewConversation: () => void;
   onSelectConversation: (conversationId: string) => void;
-  onCloseSidebar: () => void;
+  onToggleSidebar: () => void;
 }
 
-const secondaryItems = [
-  { label: "Incidents", icon: EditIcon },
+const mainItems = [
+  { label: "Search chats", icon: SearchIcon },
   { label: "Knowledge base", icon: BookIcon },
   { label: "System health", icon: PulseIcon }
+];
+
+const footerItems = [
+  { label: "Settings", icon: SettingsIcon },
+  { label: "Help", icon: HelpIcon }
 ];
 
 export function Sidebar({
   conversations,
   activeConversationId,
+  isCollapsed,
   onNewConversation,
   onSelectConversation,
-  onCloseSidebar
+  onToggleSidebar
 }: SidebarProps) {
+  if (isCollapsed) {
+    return (
+      <aside className="sidebar collapsed">
+        <div className="sidebar-rail-top">
+          <button
+            className="icon-button sidebar-collapse-button"
+            type="button"
+            onClick={onToggleSidebar}
+            aria-label="Expand sidebar"
+            title="Expand sidebar"
+          >
+            <PanelIcon />
+          </button>
+        </div>
+
+        <div className="sidebar-rail-actions">
+          <button
+            className="sidebar-rail-button"
+            type="button"
+            onClick={onNewConversation}
+            aria-label="New chat"
+            title="New chat"
+          >
+            <EditIcon />
+          </button>
+
+          {mainItems.map((item) => {
+            const Icon = item.icon;
+
+            return (
+              <button
+                key={item.label}
+                className="sidebar-rail-button"
+                type="button"
+                aria-label={item.label}
+                title={item.label}
+              >
+                <Icon />
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="sidebar-rail-spacer" />
+
+        <div className="sidebar-rail-actions sidebar-rail-footer">
+          {footerItems.map((item) => {
+            const Icon = item.icon;
+
+            return (
+              <button
+                key={item.label}
+                className="sidebar-rail-button"
+                type="button"
+                aria-label={item.label}
+                title={item.label}
+              >
+                <Icon />
+              </button>
+            );
+          })}
+        </div>
+      </aside>
+    );
+  }
+
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
@@ -87,8 +179,8 @@ export function Sidebar({
         <button
           className="icon-button sidebar-collapse-button"
           type="button"
-          onClick={onCloseSidebar}
-          aria-label="Close sidebar"
+          onClick={onToggleSidebar}
+          aria-label="Collapse sidebar"
         >
           <PanelIcon />
         </button>
@@ -100,25 +192,17 @@ export function Sidebar({
           <span>New chat</span>
         </button>
 
-        <button className="sidebar-nav-button" type="button">
-          <SearchIcon className="sidebar-nav-icon" />
-          <span>Search chats</span>
-          <span className="sidebar-shortcut">Ctrl K</span>
-        </button>
-      </div>
-
-      <nav className="sidebar-secondary-nav" aria-label="Workspace navigation">
-        {secondaryItems.map((item) => {
+        {mainItems.map((item) => {
           const Icon = item.icon;
 
           return (
-            <button key={item.label} className="sidebar-nav-button secondary" type="button">
+            <button key={item.label} className="sidebar-nav-button" type="button">
               <Icon className="sidebar-nav-icon" />
               <span>{item.label}</span>
             </button>
           );
         })}
-      </nav>
+      </div>
 
       <div className="conversation-section-title">Recent</div>
 
@@ -135,6 +219,19 @@ export function Sidebar({
             >
               <strong>{conversation.title}</strong>
               <span>{conversation.preview}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="sidebar-footer-nav">
+        {footerItems.map((item) => {
+          const Icon = item.icon;
+
+          return (
+            <button key={item.label} className="sidebar-nav-button footer" type="button">
+              <Icon className="sidebar-nav-icon" />
+              <span>{item.label}</span>
             </button>
           );
         })}

@@ -5,15 +5,6 @@ import { modelLabels, seededConversations } from "@/data/mockData.ts";
 import { requestAssistantReply } from "@/lib/chatClient.ts";
 import { Conversation, Message, ModelId } from "@/types.ts";
 
-function SidebarIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
-      <rect x="4.5" y="5" width="15" height="14" rx="3" />
-      <path d="M11 5v14" />
-    </svg>
-  );
-}
-
 function PlusIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
@@ -61,7 +52,7 @@ export default function App() {
   const [selectedModel, setSelectedModel] = useState<ModelId>(seededConversations[0].model);
   const [draft, setDraft] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   const activeConversation =
@@ -208,31 +199,19 @@ export default function App() {
   }
 
   return (
-    <div className={`app-shell${isSidebarOpen ? "" : " sidebar-collapsed"}`}>
-      {isSidebarOpen ? (
-        <Sidebar
-          conversations={conversations}
-          activeConversationId={activeConversationId}
-          onNewConversation={handleNewConversation}
-          onSelectConversation={setActiveConversationId}
-          onCloseSidebar={() => setIsSidebarOpen(false)}
-        />
-      ) : null}
+    <div className={`app-shell${isSidebarCollapsed ? " sidebar-collapsed" : ""}`}>
+      <Sidebar
+        conversations={conversations}
+        activeConversationId={activeConversationId}
+        isCollapsed={isSidebarCollapsed}
+        onNewConversation={handleNewConversation}
+        onSelectConversation={setActiveConversationId}
+        onToggleSidebar={() => setIsSidebarCollapsed((current) => !current)}
+      />
 
       <main className="workspace">
         <header className="workspace-topbar">
           <div className="workspace-title-row">
-            {!isSidebarOpen ? (
-              <button
-                className="icon-button topbar-toggle"
-                type="button"
-                onClick={() => setIsSidebarOpen(true)}
-                aria-label="Open sidebar"
-              >
-                <SidebarIcon />
-              </button>
-            ) : null}
-
             <button className="chat-title-button" type="button">
               <span>SAPFix AI</span>
               <span className="title-caret">⌄</span>
