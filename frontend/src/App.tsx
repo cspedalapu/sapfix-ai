@@ -34,15 +34,7 @@ function buildFreshConversation(): Conversation {
     preview: "Start a new SAP investigation",
     updatedAt: "Ready",
     model: "llama3.1:8b",
-    messages: [
-      {
-        id: `assistant-${now.getTime()}`,
-        role: "assistant",
-        text:
-          "Paste the exact SAP error, mention the T-code if you know it, and I will shape the nearest fixes into a practical resolution plan.",
-        timestamp: formatTime(now)
-      }
-    ]
+    messages: []
   };
 }
 
@@ -89,7 +81,7 @@ export default function App() {
         conversation.id === activeConversationId
           ? {
               ...conversation,
-              title: conversation.messages.length <= 1 ? toConversationTitle(query) : conversation.title,
+              title: conversation.messages.length === 0 ? toConversationTitle(query) : conversation.title,
               preview: "Working through a new SAP incident",
               updatedAt: formatUpdatedAt(now),
               model: selectedModel,

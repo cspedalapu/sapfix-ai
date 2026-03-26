@@ -56,7 +56,7 @@ const fallbackTemplate: MockResolutionTemplate = {
 const templates: MockResolutionTemplate[] = [
   {
     keywords: ["gap", "gaps", "spaces", "numbers", "number range"],
-    diagnosticLabel: "/SCWM/LT 120 Â· Numeric entry or number-range issue",
+    diagnosticLabel: "/SCWM/LT 120 - Numeric entry or number-range issue",
     answerLead:
       "I found a close SAP EWM pattern. Start with the simplest cause first: remove any spaces from the numeric field, then confirm the related number range is still valid in SAP.",
     sections: {
@@ -225,70 +225,13 @@ export function buildMockResponse(query: string, model: ModelId): AssistantResul
   };
 }
 
-const welcomeMessage = {
-  id: "assistant-welcome",
-  role: "assistant" as const,
-  text:
-    "Describe the SAP error, transaction code, and business step. I will turn the closest knowledge-base matches into an operator-friendly resolution path.",
-  timestamp: "09:24"
-};
-
-const numericResult = buildMockResponse("Enter the numbers without any gaps", "gpt-4o-mini");
-const logicalSystemResult = buildMockResponse("Error while accessing logical system &1", "llama3.1:8b");
-
 export const seededConversations: Conversation[] = [
-  {
-    id: "conv-numeric-gap",
-    title: "Numeric entry gap",
-    preview: numericResult.diagnosticLabel,
-    updatedAt: "Today Â· 09:24",
-    model: "gpt-4o-mini",
-    messages: [
-      welcomeMessage,
-      {
-        id: "user-gap",
-        role: "user",
-        text: "Enter the numbers without any gaps",
-        timestamp: "09:25"
-      },
-      {
-        id: "assistant-gap",
-        role: "assistant",
-        text: numericResult.answer,
-        timestamp: "09:25",
-        result: numericResult
-      }
-    ]
-  },
-  {
-    id: "conv-logical-system",
-    title: "Logical system RFC",
-    preview: logicalSystemResult.diagnosticLabel,
-    updatedAt: "Yesterday Â· 17:08",
-    model: "llama3.1:8b",
-    messages: [
-      welcomeMessage,
-      {
-        id: "user-rfc",
-        role: "user",
-        text: "Error while accessing logical system &1",
-        timestamp: "17:07"
-      },
-      {
-        id: "assistant-rfc",
-        role: "assistant",
-        text: logicalSystemResult.answer,
-        timestamp: "17:08",
-        result: logicalSystemResult
-      }
-    ]
-  },
   {
     id: "conv-new",
     title: "New diagnosis",
     preview: "Start a new SAP investigation",
     updatedAt: "Ready",
     model: "llama3.1:8b",
-    messages: [welcomeMessage]
+    messages: []
   }
 ];
