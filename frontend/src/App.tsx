@@ -213,7 +213,7 @@ export default function App() {
 
         {isEmpty ? (
           <section className="empty-state">
-            <h2 className="empty-title">Get step-by-step help</h2>
+            <h2 className="empty-title">Enter the SAP error message</h2>
             {renderComposer(true)}
           </section>
         ) : (
@@ -246,3 +246,5 @@ export default function App() {
     </div>
   );
 }
+
+
