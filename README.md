@@ -33,35 +33,6 @@ Fallback behavior:
 2. `OPENAI_API_KEY` as an optional fallback path
 3. Local knowledge-base synthesis if generation is unavailable
 
-## Tech Stack
-
-### Frontend
-
-- React `18.3.1`
-- React DOM `18.3.1`
-- TypeScript `5.6.3`
-- Vite `5.4.11`
-
-### Backend
-
-- FastAPI `0.115.6`
-- Uvicorn `0.34.0`
-- OpenAI SDK `1.68.2`
-- Requests `2.32.3`
-- Python Dotenv `1.0.1`
-
-### Data and Retrieval
-
-- Pandas `2.2.2`
-- OpenPyXL `3.1.5`
-- ChromaDB `0.5.5`
-- Sentence Transformers `3.0.1`
-- Transformers `4.44.0`
-- PyTorch `2.3.1+cu121`
-
-Note:
-The current API flow uses an offline-safe keyword retrieval path from the processed SAP knowledge-base JSON. Legacy embedding and vector-store code is still present in the repository for future retrieval upgrades.
-
 ## Current Architecture
 
 - `api_server.py`
@@ -150,10 +121,41 @@ Notes:
 - If a GitHub token was pasted into `OPENAI_API_KEY`, the backend can still recognize it, but `GITHUB_TOKEN` is the cleaner setup
 - The frontend reads its backend target from `frontend/.env.local` or `frontend/.env`
 
+## Quick Start
+
+For the first setup, run the following in order:
+
+1. `.venv\Scripts\python.exe -m pip install -r requirements.txt`
+2. `cd frontend`
+3. `npm install`
+4. `cd ..`
+
+For normal day-to-day use, run the project in this sequence:
+
+1. `start_backend.bat`
+2. `start_frontend.bat`
+
+If you want both to open automatically, run:
+
+```bat
+start_project.bat
+```
+
+Manual terminal sequence:
+
+1. `.venv\Scripts\python.exe -m uvicorn api_server:app --host 127.0.0.1 --port 8003`
+2. `cd frontend`
+3. `npm run dev -- --host 127.0.0.1 --port 4175`
+
+Local URLs:
+
+- Frontend: `http://127.0.0.1:4175`
+- Backend health: `http://127.0.0.1:8003/health`
+
 ## Run The Backend
 
 ```bash
-.venv\Scripts\python.exe -m uvicorn api_server:app --host 127.0.0.1 --port 8001
+.venv\Scripts\python.exe -m uvicorn api_server:app --host 127.0.0.1 --port 8003
 ```
 
 Available endpoints:
@@ -188,13 +190,13 @@ The response includes:
 cd frontend
 npm install
 npm run build
-npm run dev
+npm run dev -- --host 127.0.0.1 --port 4175
 ```
 
 Set the frontend API target in `frontend/.env.local` or `frontend/.env`:
 
 ```env
-VITE_API_BASE_URL=http://127.0.0.1:8001
+VITE_API_BASE_URL=http://127.0.0.1:8003
 ```
 
 ## Local Ollama Setup
@@ -264,3 +266,7 @@ These screenshots are stored in [`docs/screenshots`](docs/screenshots) so they c
 ### Demo 08
 
 ![Demo 08](docs/screenshots/sap_demo_08.png)
+
+## Tech Stack
+
+SAPFix AI uses React `18.3.1`, React DOM `18.3.1`, TypeScript `5.6.3`, and Vite `5.4.11` on the frontend. The backend runs on FastAPI `0.115.6` and Uvicorn `0.34.0`, with the OpenAI SDK `1.68.2`, Requests `2.32.3`, and Python Dotenv `1.0.1` handling provider integration and environment loading. For data processing and retrieval support, the repository includes Pandas `2.2.2`, OpenPyXL `3.1.5`, ChromaDB `0.5.5`, Sentence Transformers `3.0.1`, Transformers `4.44.0`, and PyTorch `2.3.1+cu121`. The current API path uses an offline-safe keyword retrieval flow over the processed SAP knowledge-base JSON, while the legacy embedding and vector-store modules remain in the repo for future retrieval upgrades.
