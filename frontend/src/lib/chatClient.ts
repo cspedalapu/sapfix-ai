@@ -87,32 +87,28 @@ export async function requestAssistantReply({
   history
 }: RequestAssistantReplyArgs): Promise<AssistantResult> {
   if (hasApiBaseUrl) {
-    try {
-      const response = await fetch(`${apiBaseUrl}/chat`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          query,
-          model,
-          top_k: 3,
-          history: history.map((message) => ({
-            role: message.role,
-            text: message.text
-          }))
-        })
-      });
+    const response = await fetch(`${apiBaseUrl}/chat`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        query,
+        model,
+        top_k: 3,
+        history: history.map((message) => ({
+          role: message.role,
+          text: message.text
+        }))
+      })
+    });
 
-      if (!response.ok) {
-        throw new Error(`Backend returned ${response.status}`);
-      }
-
-      const payload = await response.json() as Record<string, unknown>;
-      return normalizeApiResponse(payload, model);
-    } catch (error) {
-      console.warn("Falling back to mock response", error);
+    if (!response.ok) {
+      throw new Error(`Backend returned ${response.status} from ${apiBaseUrl}/chat`);
     }
+
+    const payload = await response.json() as Record<string, unknown>;
+    return normalizeApiResponse(payload, model);
   }
 
   await new Promise((resolve) => window.setTimeout(resolve, 700));
