@@ -1,0 +1,46 @@
+SAPFix AI terminal command sequence
+
+Project root:
+d:\#Code\VS Code\sapfix-ai
+
+First-time setup
+
+1. Open a terminal in the project root and run:
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+2. Open a second terminal, go to the frontend folder, and run:
+cd frontend
+npm install
+
+Normal run sequence
+
+Terminal 1: Backend
+cd /d d:\#Code\VS Code\sapfix-ai
+.venv\Scripts\python.exe -m uvicorn api_server:app --host 127.0.0.1 --port 8003
+
+Terminal 2: Frontend
+cd /d d:\#Code\VS Code\sapfix-ai\frontend
+npm run dev -- --host 127.0.0.1 --port 4175
+
+Optional local Ollama setup
+
+Terminal 3: Ollama
+ollama serve
+
+First time only:
+ollama pull llama3.1:8b
+
+URLs
+
+Frontend:
+http://127.0.0.1:4175
+
+Backend health:
+http://127.0.0.1:8003/health
+
+Notes
+
+- Keep the backend terminal open while using the app.
+- Keep the frontend terminal open while using the app.
+- If you change frontend environment values, restart the frontend terminal.
+- If you change backend Python code or `.env`, restart the backend terminal.
