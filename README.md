@@ -89,3 +89,39 @@ VITE_API_BASE_URL=http://127.0.0.1:8001
 - The frontend shows the requested model and the actual model/provider used.
 - If GitHub Models or OpenAI is unavailable, the backend still returns a grounded answer using the local SAP knowledge base.
 - The original embedding-based retriever is still in the repo, but the current API path uses an offline-safe keyword retrieval flow so the app remains usable without external model downloads.
+
+## Screenshots
+
+These screenshots are stored in [`docs/screenshots`](docs/screenshots) so they can be pushed to GitHub and referenced directly from this README.
+
+### Demo 01
+
+![Demo 01](docs/screenshots/sap_demo_01.png)
+
+### Demo 02
+
+![Demo 02](docs/screenshots/sap_demo_02.png)
+
+### Demo 03
+
+![Demo 03](docs/screenshots/sap_demo_03.png)
+
+### Demo 04
+
+![Demo 04](docs/screenshots/sap_demo_04.png)
+
+### Demo 05
+
+![Demo 05](docs/screenshots/sap_demo_05.png)
+
+### Demo 06
+
+![Demo 06](docs/screenshots/sap_demo_06.png)
+
+### Demo 07
+
+![Demo 07](docs/screenshots/sap_demo_07.png)
+
+### Demo 08
+
+![Demo 08](docs/screenshots/sap_demo_08.png)
