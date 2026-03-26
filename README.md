@@ -45,15 +45,12 @@ Fallback behavior:
   Local SAP knowledge-base inputs and processed artifacts
 - `output/`
   Generated runtime outputs such as local vector database files
-- `app.py`
-  Older Streamlit prototype
 
 ## Repository Structure
 
 ```text
 sapfix-ai/
 ├─ api_server.py
-├─ app.py
 ├─ main.py
 ├─ requirements.txt
 ├─ .env.example
